@@ -32,3 +32,4 @@ Route::get('dashboard', [DashboardController::class, 'index'])->middleware('veri
 Route::get('resend/verification/email', [DashboardController::class, 'resend'])->name('resend.email');
 
 Route::get('/verify', [DashboardController::class, 'verify'])->name('verification.notice');
+
