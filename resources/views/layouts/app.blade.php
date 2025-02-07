@@ -20,6 +20,13 @@
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="#">Home</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{{ route('dashboard') }}">Dashboard</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{{ route('subscribe') }}">Subscribe</a>
+              </li>
+
               @if(!Auth::check())
                 <li class="nav-item">
                   <a class="nav-link" href="{{ route('create.seeker') }}">Job Seeker</a>
@@ -31,6 +38,7 @@
                   <a class="nav-link" href="{{ route('login') }}">Login</a>
                 </li>
               @endif 
+
               @if(Auth::check())
               <li class="nav-item">
                 <a class="nav-link" id="logout" href="#">Logout</a>
