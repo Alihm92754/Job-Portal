@@ -38,11 +38,20 @@ Route::get('resend/verification/email', [DashboardController::class, 'resend'])-
 
 Route::get('/verify', [DashboardController::class, 'verify'])->name('verification.notice');
 
-Route::get('subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe')->middleware('auth', isEmployer::class, donotAllowUserToMakePayment::class);
-Route::get('pay/weekly', [SubscriptionController::class, 'initiatePayment'])->name('pay.weekly')->middleware('auth');
-Route::get('pay/monthly', [SubscriptionController::class, 'initiatePayment'])->name('pay.monthly')->middleware('auth');
-Route::get('pay/yearly', [SubscriptionController::class, 'initiatePayment'])->name('pay.yearly')->middleware('auth');
-Route::get('payment/success', [SubscriptionController::class, 'paymentSuccess'])->name('payment.success')->middleware('auth');
-Route::get('payment/cancel', [SubscriptionController::class, 'cancel'])->name('payment.cancel')->middleware('auth');
+
+
+Route::middleware(['auth', isEmployer::class])->group(function () {
+    Route::get('subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
+
+    Route::middleware(donotAllowUserToMakePayment::class)->group(function () {
+        Route::get('pay/weekly', [SubscriptionController::class, 'initiatePayment'])->name('pay.weekly');
+        Route::get('pay/monthly', [SubscriptionController::class, 'initiatePayment'])->name('pay.monthly');
+        Route::get('pay/yearly', [SubscriptionController::class, 'initiatePayment'])->name('pay.yearly');
+        Route::get('payment/success', [SubscriptionController::class, 'paymentSuccess'])->name('payment.success');
+        Route::get('payment/cancel', [SubscriptionController::class, 'cancel'])->name('payment.cancel');
+    });
+});
+
+
 
 Route::get('job/create', [PostJobController::class, 'create'])->name('job.create')->middleware(isPremiumUser::class);

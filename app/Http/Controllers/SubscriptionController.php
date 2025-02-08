@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
+use App\Http\Middleware\donotAllowUserToMakePayment;
 use App\Http\Middleware\isEmployer;
+use App\Mail\PurchaseMail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -15,6 +19,7 @@ class SubscriptionController extends Controller
     const MONTHLY_AMOUNT = 24.99;
     const YEARLY_AMOUNT = 270.00;
     const CURRENCY = 'USD';
+        
 
     public function subscribe()
     {
@@ -107,25 +112,15 @@ class SubscriptionController extends Controller
             'status' => 'paid'
         ]);
 
+        try {
+            Mail::to(auth()->user())->queue(new PurchaseMail($plan, $billingEnds));
+        }
+        catch (\Exception $e) {
+            return response()->json($e);
+        }
+
+
         return redirect()->route('dashboard')->with('success', 'Payment was successfully processed');
-
-
-        // $plan = $request->plan;
-        // $billingEnds = $request->billing_ends;
-    
-        // $user = User::find($request->user_id); // Use a user identifier passed in the signed route
-    
-        // if (!$user) {
-        //     return redirect()->route('dashboard')->with('error', 'User not found.');
-        // }
-    
-        // $user->update([
-        //     'plan' => $plan,
-        //     'billing_ends' => $billingEnds,
-        //     'status' => 'paid',
-        // ]);
-    
-        // return redirect()->route('dashboard')->with('success', 'Payment was successfully processed');
     }
     
 
